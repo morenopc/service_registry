@@ -10,10 +10,10 @@ CHANGE_CHOICES = (
 class Service(models.Model):
     """Service record"""
 
-    name = models.CharField(max_length=32)
+    service = models.CharField(max_length=32)
     version = models.CharField(max_length=16)
     change = models.CharField(
         max_length=16, choices=CHANGE_CHOICES, default='created')
 
     def __str__(self):
-        return '%s %s %s' % (self.name, self.version, self.change)
+        return '%s %s %s' % (self.service, self.version, self.change)
