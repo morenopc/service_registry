@@ -10,6 +10,29 @@ class ServiceModelSerializer(serializers.ModelSerializer):
         model = Service
         exclude = ('id', )
 
+    def update(self, instance, validated_data):
+
+        instance.change = 'changed'
+        instance.save()
+
+        return instance
+
+
+class ServiceUpdateModelSerializer(serializers.ModelSerializer):
+
+    """Service update data fields"""
+
+    class Meta:
+        model = Service
+        fields = ('change', )
+
+    def update(self, instance, validated_data):
+
+        instance.change = 'changed'
+        instance.save()
+
+        return instance
+
 
 class ServiceSearchModelSerializer(serializers.ModelSerializer):
 

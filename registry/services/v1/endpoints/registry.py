@@ -1,8 +1,10 @@
 from django.db.models import Count
-from rest_framework import viewsets, mixins
+from rest_framework import viewsets, mixins, generics, permissions
 from rest_framework.exceptions import NotFound, APIException
 from core.models import Service
-from core.serializers import ServiceModelSerializer, ServiceSearchModelSerializer
+from core.serializers import (
+    ServiceModelSerializer, ServiceSearchModelSerializer,
+    ServiceUpdateModelSerializer)
 
 
 class ServiceSearchNotFound(NotFound):
@@ -60,3 +62,9 @@ class ServiceSearchGenericViewSet(mixins.RetrieveModelMixin,
 
         except Exception as e:
             raise APIException(e)
+
+
+class ServiceUpdateAPIView(generics.UpdateAPIView):
+    """Update service"""
+    queryset = Service.objects.all()
+    serializer_class = ServiceUpdateModelSerializer

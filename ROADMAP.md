@@ -168,7 +168,25 @@ curl -v "Content-Type: application/json" "http://localhost:8000/api/v1/search/?v
 
 ### Updating a service
 ```
-pass
+> PUT /api/v1/update/1/ HTTP/1.1
+> Host: localhost:8000
+> User-Agent: curl/7.52.1
+> Accept: */*
+> Content-Type:application/json
+> Content-Length: 46
+>
+< HTTP/1.1 200 OK
+< Date: Fri, 09 Mar 2018 20:05:52 GMT
+< Server: WSGIServer/0.2 CPython/3.6.4
+< Content-Type: application/json
+< Content-Length: 20
+
+curl -v -X PUT -H "Content-Type:application/json" -d '{
+  "service":"ttestt",
+  "version":"0.1.3"
+ }'  http://localhost:8000/api/v1/update/1/
+
+{"change":"changed"}
 ```
 
 ### Removing a service
