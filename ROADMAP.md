@@ -34,3 +34,35 @@ $ pyenv versions
 $ python -V
 Python 3.6.4
 ```
+
+### Run local server
+
+```
+$ . env/bin/activate
+(env) $ pip install -r requirements.txt
+(env) $ python manage.py makemigrations
+(env) $ python manage.py migrate
+(env) $ python manage.py runserver
+```
+
+## Rest Framework
+
+### Add service
+
+```
+POST /api/v1/registries/ HTTP/1.1
+Host: localhost:8000
+User-Agent: curl/7.52.1
+Accept: */*
+Content-Type: application/json
+Content-Length: 42
+
+
+curl -H "Content-Type:application/json" \
+-d '{
+  "name":"test",
+  "version":"0.0.1"
+ }' \
+ http://localhost:8000/api/v1/registries/
+```
+
