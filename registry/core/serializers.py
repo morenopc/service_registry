@@ -23,16 +23,7 @@ class ServiceSearchModelSerializer(serializers.ModelSerializer):
         service = self.context['request'].query_params.get('service', None)
         version = self.context['request'].query_params.get('version', None)
 
-        # parameters validation
-        if service is None and version is None:
-            raise serializers.ValidationError(
-                {'detail': ('Search parameters (service or version) '
-                                    'could not be found')})
-        elif service is None:
-            raise serializers.ValidationError(
-                {'detail': ('Search parameter (service) '
-                                        'could not be found')})
-        elif version is None:
+        if version is None:
             self.fields.pop('version')
 
     count = serializers.IntegerField(read_only=True)

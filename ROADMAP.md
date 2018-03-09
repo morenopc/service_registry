@@ -50,18 +50,128 @@ $ . env/bin/activate
 ### Add service
 
 ```
-POST /api/v1/registries/ HTTP/1.1
-Host: localhost:8000
-User-Agent: curl/7.52.1
-Accept: */*
-Content-Type: application/json
-Content-Length: 42
-
+> POST /api/v1/registries/ HTTP/1.1
+> Host: localhost:8000
+> User-Agent: curl/7.52.1
+> Accept: */*
+> Content-Type:application/json
+> Content-Length: 44
+>
+< HTTP/1.1 201 Created
+< Content-Type: application/json
 
 curl -H "Content-Type:application/json" \
 -d '{
-  "name":"test",
+  "service":"test",
   "version":"0.0.1"
  }' \
  http://localhost:8000/api/v1/registries/
+
+{"service":"test","version":"0.0.1","change":"created"}
+```
+
+### Find service
+
+```
+> GET /api/v1/search/?service=test3 HTTP/1.1
+> Host: localhost:8000
+> User-Agent: curl/7.52.1
+> Accept: */*
+>
+< HTTP/1.1 200 OK
+< Date: Fri, 09 Mar 2018 15:38:14 GMT
+< Server: WSGIServer/0.2 CPython/3.6.4
+< Content-Type: application/json
+< Content-Length: 31
+
+curl -v "Content-Type: application/json" \
+"http://localhost:8000/api/v1/search/?service=test3&version=0.0.1"
+
+{"service":"test3","version":"0.0.1","count":3}
+```
+
+### Finding non existing service
+
+```
+> GET /api/v1/search/?service=test1 HTTP/1.1
+> Host: localhost:8000
+> User-Agent: curl/7.52.1
+> Accept: */*
+>
+< HTTP/1.1 404 Not Found
+< Date: Fri, 09 Mar 2018 18:49:09 GMT
+< Server: WSGIServer/0.2 CPython/3.6.4
+< Content-Type: application/json
+< Content-Length: 29
+
+curl -v "Content-Type: application/json" "http://localhost:8000/api/v1/search/?service=test1"
+
+{"service":"test1","count":0}
+```
+
+### Finding service without version
+
+```
+> GET /api/v1/search/?service=test HTTP/1.1
+> Host: localhost:8000
+> User-Agent: curl/7.52.1
+> Accept: */*
+>
+< HTTP/1.1 200 OK
+< Date: Fri, 09 Mar 2018 18:45:22 GMT
+< Server: WSGIServer/0.2 CPython/3.6.4
+< Content-Type: application/json
+< Content-Length: 28
+
+curl -v "Content-Type: application/json" "http://localhost:8000/api/v1/search/?service=test"
+
+{"service":"test","count":3}
+```
+
+### Exceptions
+
+#### Search without parameter
+```
+> GET /api/v1/search/ HTTP/1.1
+> Host: localhost:8000
+> User-Agent: curl/7.52.1
+> Accept: */*
+>
+< HTTP/1.1 500 Internal Server Error
+< Date: Fri, 09 Mar 2018 18:50:41 GMT
+< Server: WSGIServer/0.2 CPython/3.6.4
+< Content-Type: application/json
+< Content-Length: 70
+
+curl -v "Content-Type: application/json" "http://localhost:8000/api/v1/search/"
+
+{"detail":"Search parameters (service or version) could not be found"}
+```
+
+#### Search without service
+```
+> GET /api/v1/search/?version=0.0.1 HTTP/1.1
+> Host: localhost:8000
+> User-Agent: curl/7.52.1
+> Accept: */*
+>
+< HTTP/1.1 500 Internal Server Error
+< Date: Fri, 09 Mar 2018 18:50:53 GMT
+< Server: WSGIServer/0.2 CPython/3.6.4
+< Content-Type: application/json
+< Content-Length: 58
+
+curl -v "Content-Type: application/json" "http://localhost:8000/api/v1/search/?version=0.0.1"
+
+{"detail":"Search parameter (service) could not be found"}
+```
+
+### Updating a service
+```
+pass
+```
+
+### Removing a service
+```
+pass
 ```
