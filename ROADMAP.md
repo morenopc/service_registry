@@ -12,7 +12,8 @@ Get a registry web service API up and running with a stronge base, easy to expan
 2. install and config (python, django and so on) and start project
 3. install and config Django REST framework (and other apps)
 4. write some code, pass the tests and commit (while push: if all_tests_passed: push = True)
-5. create a pull request
+5. PEP8
+6. create a pull request
 
 
 ## Setup development 
@@ -143,7 +144,7 @@ curl -v "Content-Type: application/json" "http://localhost:8000/api/v1/search/?s
 < Content-Type: application/json
 < Content-Length: 70
 
-curl -v "Content-Type: application/json" "http://localhost:8000/api/v1/search/"
+curl "Content-Type: application/json" "http://localhost:8000/api/v1/search/"
 
 {"detail":"Search parameters (service or version) could not be found"}
 ```
@@ -161,7 +162,7 @@ curl -v "Content-Type: application/json" "http://localhost:8000/api/v1/search/"
 < Content-Type: application/json
 < Content-Length: 58
 
-curl -v "Content-Type: application/json" "http://localhost:8000/api/v1/search/?version=0.0.1"
+curl "Content-Type: application/json" "http://localhost:8000/api/v1/search/?version=0.0.1"
 
 {"detail":"Search parameter (service) could not be found"}
 ```
@@ -181,7 +182,7 @@ curl -v "Content-Type: application/json" "http://localhost:8000/api/v1/search/?v
 < Content-Type: application/json
 < Content-Length: 20
 
-curl -v -X PUT -H "Content-Type:application/json" -d '{
+curl -X PUT -H "Content-Type:application/json" -d '{
   "service":"ttestt",
   "version":"0.1.3"
  }'  http://localhost:8000/api/v1/update/1/
@@ -191,5 +192,18 @@ curl -v -X PUT -H "Content-Type:application/json" -d '{
 
 ### Removing a service
 ```
-pass
+> DELETE /api/v1/delete/4/ HTTP/1.1
+> Host: localhost:8000
+> User-Agent: curl/7.52.1
+> Accept: */*
+>
+< HTTP/1.1 200 OK
+< Date: Fri, 09 Mar 2018 20:37:25 GMT
+< Server: WSGIServer/0.2 CPython/3.6.4
+< Content-Type: application/json
+< Content-Length: 38
+
+curl -X DELETE http://localhost:8000/api/v1/delete/4/
+
+{"service":"test3","change":"removed"}
 ```

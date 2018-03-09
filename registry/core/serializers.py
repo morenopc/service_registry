@@ -8,14 +8,7 @@ class ServiceModelSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Service
-        exclude = ('id', )
-
-    def update(self, instance, validated_data):
-
-        instance.change = 'changed'
-        instance.save()
-
-        return instance
+        fields = '__all__'
 
 
 class ServiceUpdateModelSerializer(serializers.ModelSerializer):
@@ -34,6 +27,15 @@ class ServiceUpdateModelSerializer(serializers.ModelSerializer):
         return instance
 
 
+class ServiceDestroyModelSerializer(serializers.ModelSerializer):
+
+    """Service remove data fields"""
+
+    class Meta:
+        model = Service
+        fields = ('service', 'change')
+
+
 class ServiceSearchModelSerializer(serializers.ModelSerializer):
 
     """Service search data fields"""
@@ -46,6 +48,7 @@ class ServiceSearchModelSerializer(serializers.ModelSerializer):
         service = self.context['request'].query_params.get('service', None)
         version = self.context['request'].query_params.get('version', None)
 
+        # remove version from fields
         if version is None:
             self.fields.pop('version')
 

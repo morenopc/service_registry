@@ -7,6 +7,7 @@ CHANGE_CHOICES = (
     ('removed', 'removed'),
 )
 
+
 class Service(models.Model):
     """Service record"""
 

@@ -1,13 +1,15 @@
 from django.db.models import Count
-from rest_framework import viewsets, mixins, generics, permissions
+from rest_framework import status, viewsets, mixins, generics, permissions
 from rest_framework.exceptions import NotFound, APIException
+from rest_framework.response import Response
 from core.models import Service
 from core.serializers import (
     ServiceModelSerializer, ServiceSearchModelSerializer,
-    ServiceUpdateModelSerializer)
+    ServiceUpdateModelSerializer, ServiceDestroyModelSerializer)
 
 
 class ServiceSearchNotFound(NotFound):
+    """Custom NotFound API Exception message"""
 
     def __init__(self, detail=None, code=None):
         if detail is None:
@@ -20,6 +22,7 @@ class ServiceSearchNotFound(NotFound):
 
 
 class ServiceViewSet(viewsets.ModelViewSet):
+    """List all services"""
 
     queryset = Service.objects.all()
     serializer_class = ServiceModelSerializer
@@ -27,6 +30,7 @@ class ServiceViewSet(viewsets.ModelViewSet):
 
 class ServiceSearchGenericViewSet(mixins.RetrieveModelMixin,
                                   viewsets.GenericViewSet):
+    """Service search viewset"""
 
     queryset = Service.objects.all(
                                 ).values('service', 'version'
@@ -41,14 +45,14 @@ class ServiceSearchGenericViewSet(mixins.RetrieveModelMixin,
         service = self.request.query_params.get('service', None)
         version = self.request.query_params.get('version', None)
 
-        # parameters validation
+        # search parameters validation
         if service is None and version is None:
             raise APIException('Search parameters (service or version) '
-                                'could not be found')
+                               'could not be found')
 
         elif service is None:
             raise APIException('Search parameter (service) '
-                                'could not be found')
+                               'could not be found')
 
         # Finding service with or without version
         try:
@@ -68,3 +72,15 @@ class ServiceUpdateAPIView(generics.UpdateAPIView):
     """Update service"""
     queryset = Service.objects.all()
     serializer_class = ServiceUpdateModelSerializer
+
+
+class ServiceDestroyAPIView(generics.DestroyAPIView):
+    """Delete service"""
+    queryset = Service.objects.all()
+    serializer_class = ServiceDestroyModelSerializer
+
+    def destroy(self, request, *args, **kwargs):
+        instance = self.get_object()
+        self.perform_destroy(instance)
+        return Response(
+            {'service': instance.service, 'change': 'removed'})
