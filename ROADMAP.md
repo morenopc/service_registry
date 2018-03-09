@@ -65,4 +65,3 @@ curl -H "Content-Type:application/json" \
  }' \
  http://localhost:8000/api/v1/registries/
 ```
-

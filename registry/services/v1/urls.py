@@ -7,12 +7,8 @@ router = routers.DefaultRouter()
 router.register(r'registries', registry.ServiceViewSet)
 
 urlpatterns = [
-    url(r'^api-auth/', include('rest_framework.urls',
-                               namespace='rest_framework')),
-]
-
-urlpatterns = [
     url(r'^', include(router.urls)),
     url(r'^api-auth/', include(
-            'rest_framework.urls', namespace='rest_framework'))
+            'rest_framework.urls', namespace='rest_framework')),
+    url(r'^search/', registry.ServiceSearchViewSet.as_view({'get': 'list'})),
 ]
