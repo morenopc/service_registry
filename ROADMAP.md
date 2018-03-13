@@ -14,6 +14,9 @@ Get a registry web service API up and running with a stronge base, easy to expan
 4. write some code, pass the tests and commit (while push: if all_tests_passed: push = True)
 5. PEP8
 6. create a pull request
+7. add JSON Web Tokens (JWT) REST framework authentication
+8. write and pass unit tests
+9. write and pass behave tests
 
 
 ## Setup development 
@@ -39,6 +42,7 @@ Python 3.6.4
 ### Run local server
 
 ```
+$ python -m venv env
 $ . env/bin/activate
 (env) $ pip install -r requirements.txt
 (env) $ python manage.py makemigrations
