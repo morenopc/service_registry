@@ -8,7 +8,7 @@ class ServiceModelSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Service
-        fields = '__all__'
+        exclude = ('id', )
 
 
 class ServiceUpdateModelSerializer(serializers.ModelSerializer):

@@ -151,3 +151,9 @@ JWT_AUTH = {
     # allow token refresh time (30 days)
     'JWT_REFRESH_EXPIRATION_DELTA': datetime.timedelta(days=30),
 }
+
+# List of directories searched for fixture files
+# https://docs.djangoproject.com/en/2.0/ref/settings/#std:setting-FIXTURE_DIRS
+FIXTURE_DIRS = [
+    os.path.join(BASE_DIR, 'services/fixtures')
+]

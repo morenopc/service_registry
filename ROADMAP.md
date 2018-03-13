@@ -263,3 +263,10 @@ http://localhost:8000/api/v1/delete/4/
 
 {"service":"test3","change":"removed"}
 ```
+
+## Unit Tests
+
+### Run (test services)
+```
+$ python manage.py test services
+```
