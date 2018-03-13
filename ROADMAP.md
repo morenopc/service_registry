@@ -50,6 +50,59 @@ $ . env/bin/activate
 (env) $ python manage.py runserver
 ```
 
+## Rest Framework JWT (JSON web token)
+
+### Get Token
+
+```
+> POST /api-token-auth/ HTTP/1.1
+> Host: localhost:8000
+> User-Agent: curl/7.52.1
+> Accept: */*
+>
+< HTTP/1.1 200 OK
+< Content-Type: application/json
+< Content-Length: 221
+
+$ curl -H "Content-Type:application/json" -d '{"username":"admin","password":"p@SS4w0rD4"}' http://localhost:8000/api-token-auth/
+
+{"token":"eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJ1c2VyX2lkIjoxLCJ1c2VybmFtZSI6ImFkbWluIiwiZXhwIjoxNTIxMTUyNTM5LCJlbWFpbCI6ImFkbWluQG1haWwuY29tIiwib3JpZ19pYXQiOjE1MjA4OTMzMzl9.4ewU0nAA1q72me_Su7plzylVjMnwNEbkcwx_uxY7anM"}
+```
+
+### Verify Token
+
+```
+> POST /api-token-verify/ HTTP/1.1
+> Host: localhost:8000
+> User-Agent: curl/7.52.1
+> Accept: */*
+>
+< HTTP/1.1 200 OK
+< Content-Type: application/json
+< Content-Length: 221
+
+$ curl -H "Content-Type:application/json" -d '{"token":"eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJ1c2VyX2lkIjoxLCJ1c2VybmFtZSI6ImFkbWluIiwiZXhwIjoxNTIxMTUyNTM5LCJlbWFpbCI6ImFkbWluQG1haWwuY29tIiwib3JpZ19pYXQiOjE1MjA4OTMzMzl9.4ewU0nAA1q72me_Su7plzylVjMnwNEbkcwx_uxY7anM"}' http://localhost:8000/api-token-verify/
+
+{"token":"eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJ1c2VyX2lkIjoxLCJ1c2VybmFtZSI6ImFkbWluIiwiZXhwIjoxNTIxMTUyNTM5LCJlbWFpbCI6ImFkbWluQG1haWwuY29tIiwib3JpZ19pYXQiOjE1MjA4OTMzMzl9.4ewU0nAA1q72me_Su7plzylVjMnwNEbkcwx_uxY7anM"}
+```
+
+### Refresh Token
+
+```
+> POST /api-token-refresh/ HTTP/1.1
+> Host: localhost:8000
+> User-Agent: curl/7.52.1
+> Accept: */*
+>
+< HTTP/1.1 200 OK
+< Content-Type: application/json
+< Content-Length: 221
+
+$ curl -v -H "Content-Type:application/json" -d '{"token":"eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJ1c2VyX2lkIjoxLCJ1c2VybmFtZSI6ImFkbWluIiwiZXhwIjoxNTIxMTUyNTM5LCJlbWFpbCI6ImFkbWluQG1haWwuY29tIiwib3JpZ19pYXQiOjE1MjA4OTMzMzl9.4ewU0nAA1q72me_Su7plzylVjMnwNEbkcwx_uxY7anM"}' http://localhost:8000/api-token-refresh/
+
+{"token":"eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJ1c2VyX2lkIjoxLCJ1c2VybmFtZSI6ImFkbWluIiwiZXhwIjoxNTIxMTUzMjQ0LCJlbWFpbCI6ImFkbWluQG1haWwuY29tIiwib3JpZ19pYXQiOjE1MjA4OTMzMzl9.VQD9bqa8WR1Y2-7ecghZ2y-7T9tOstMhU7incJXlhc0"}
+```
+
 ## Rest Framework
 
 ### Add service
@@ -59,13 +112,13 @@ $ . env/bin/activate
 > Host: localhost:8000
 > User-Agent: curl/7.52.1
 > Accept: */*
-> Content-Type:application/json
-> Content-Length: 44
 >
 < HTTP/1.1 201 Created
 < Content-Type: application/json
+< Content-Length: 63
 
-curl -H "Content-Type:application/json" \
+curl -v -H "Authorization: JWT eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJ1c2VyX2lkIjoxLCJ1c2VybmFtZSI6ImFkbWluIiwiZXhwIjoxNTIxMTUzMjQ0LCJlbWFpbCI6ImFkbWluQG1haWwuY29tIiwib3JpZ19pYXQiOjE1MjA4OTMzMzl9.VQD9bqa8WR1Y2-7ecghZ2y-7T9tOstMhU7incJXlhc0" \
+-H "Content-Type:application/json" \
 -d '{
   "service":"test",
   "version":"0.0.1"
@@ -84,12 +137,11 @@ curl -H "Content-Type:application/json" \
 > Accept: */*
 >
 < HTTP/1.1 200 OK
-< Date: Fri, 09 Mar 2018 15:38:14 GMT
-< Server: WSGIServer/0.2 CPython/3.6.4
 < Content-Type: application/json
 < Content-Length: 31
 
-curl -v "Content-Type: application/json" \
+curl -H "Authorization: JWT eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJ1c2VyX2lkIjoxLCJ1c2VybmFtZSI6ImFkbWluIiwiZXhwIjoxNTIxMTUzMjQ0LCJlbWFpbCI6ImFkbWluQG1haWwuY29tIiwib3JpZ19pYXQiOjE1MjA4OTMzMzl9.VQD9bqa8WR1Y2-7ecghZ2y-7T9tOstMhU7incJXlhc0" \
+-H "Content-Type:application/json" \
 "http://localhost:8000/api/v1/search/?service=test3&version=0.0.1"
 
 {"service":"test3","version":"0.0.1","count":3}
@@ -104,12 +156,11 @@ curl -v "Content-Type: application/json" \
 > Accept: */*
 >
 < HTTP/1.1 404 Not Found
-< Date: Fri, 09 Mar 2018 18:49:09 GMT
-< Server: WSGIServer/0.2 CPython/3.6.4
 < Content-Type: application/json
 < Content-Length: 29
 
-curl -v "Content-Type: application/json" "http://localhost:8000/api/v1/search/?service=test1"
+curl -H "Authorization: JWT eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJ1c2VyX2lkIjoxLCJ1c2VybmFtZSI6ImFkbWluIiwiZXhwIjoxNTIxMTUzMjQ0LCJlbWFpbCI6ImFkbWluQG1haWwuY29tIiwib3JpZ19pYXQiOjE1MjA4OTMzMzl9.VQD9bqa8WR1Y2-7ecghZ2y-7T9tOstMhU7incJXlhc0" \
+-H "Content-Type:application/json" "http://localhost:8000/api/v1/search/?service=test1"
 
 {"service":"test1","count":0}
 ```
@@ -123,12 +174,12 @@ curl -v "Content-Type: application/json" "http://localhost:8000/api/v1/search/?s
 > Accept: */*
 >
 < HTTP/1.1 200 OK
-< Date: Fri, 09 Mar 2018 18:45:22 GMT
-< Server: WSGIServer/0.2 CPython/3.6.4
-< Content-Type: application/json
+< Content-Type:application/json
 < Content-Length: 28
 
-curl -v "Content-Type: application/json" "http://localhost:8000/api/v1/search/?service=test"
+curl -H "Authorization: JWT eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJ1c2VyX2lkIjoxLCJ1c2VybmFtZSI6ImFkbWluIiwiZXhwIjoxNTIxMTUzMjQ0LCJlbWFpbCI6ImFkbWluQG1haWwuY29tIiwib3JpZ19pYXQiOjE1MjA4OTMzMzl9.VQD9bqa8WR1Y2-7ecghZ2y-7T9tOstMhU7incJXlhc0" \
+-H "Content-Type:application/json" \
+"http://localhost:8000/api/v1/search/?service=test"
 
 {"service":"test","count":3}
 ```
@@ -143,12 +194,12 @@ curl -v "Content-Type: application/json" "http://localhost:8000/api/v1/search/?s
 > Accept: */*
 >
 < HTTP/1.1 500 Internal Server Error
-< Date: Fri, 09 Mar 2018 18:50:41 GMT
-< Server: WSGIServer/0.2 CPython/3.6.4
-< Content-Type: application/json
+< Content-Type:application/json
 < Content-Length: 70
 
-curl "Content-Type: application/json" "http://localhost:8000/api/v1/search/"
+curl -H "Authorization: JWT eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJ1c2VyX2lkIjoxLCJ1c2VybmFtZSI6ImFkbWluIiwiZXhwIjoxNTIxMTUzMjQ0LCJlbWFpbCI6ImFkbWluQG1haWwuY29tIiwib3JpZ19pYXQiOjE1MjA4OTMzMzl9.VQD9bqa8WR1Y2-7ecghZ2y-7T9tOstMhU7incJXlhc0" \
+-H "Content-Type:application/json" \
+"http://localhost:8000/api/v1/search/"
 
 {"detail":"Search parameters (service or version) could not be found"}
 ```
@@ -161,12 +212,12 @@ curl "Content-Type: application/json" "http://localhost:8000/api/v1/search/"
 > Accept: */*
 >
 < HTTP/1.1 500 Internal Server Error
-< Date: Fri, 09 Mar 2018 18:50:53 GMT
-< Server: WSGIServer/0.2 CPython/3.6.4
-< Content-Type: application/json
+< Content-Type:application/json
 < Content-Length: 58
 
-curl "Content-Type: application/json" "http://localhost:8000/api/v1/search/?version=0.0.1"
+curl -H "Authorization: JWT eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJ1c2VyX2lkIjoxLCJ1c2VybmFtZSI6ImFkbWluIiwiZXhwIjoxNTIxMTUzMjQ0LCJlbWFpbCI6ImFkbWluQG1haWwuY29tIiwib3JpZ19pYXQiOjE1MjA4OTMzMzl9.VQD9bqa8WR1Y2-7ecghZ2y-7T9tOstMhU7incJXlhc0" \
+-H "Content-Type:application/json" \
+"http://localhost:8000/api/v1/search/?version=0.0.1"
 
 {"detail":"Search parameter (service) could not be found"}
 ```
@@ -181,15 +232,16 @@ curl "Content-Type: application/json" "http://localhost:8000/api/v1/search/?vers
 > Content-Length: 46
 >
 < HTTP/1.1 200 OK
-< Date: Fri, 09 Mar 2018 20:05:52 GMT
-< Server: WSGIServer/0.2 CPython/3.6.4
 < Content-Type: application/json
 < Content-Length: 20
 
-curl -X PUT -H "Content-Type:application/json" -d '{
+curl -X PUT -H "Authorization: JWT eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJ1c2VyX2lkIjoxLCJ1c2VybmFtZSI6ImFkbWluIiwiZXhwIjoxNTIxMTUzMjQ0LCJlbWFpbCI6ImFkbWluQG1haWwuY29tIiwib3JpZ19pYXQiOjE1MjA4OTMzMzl9.VQD9bqa8WR1Y2-7ecghZ2y-7T9tOstMhU7incJXlhc0" \
+-H "Content-Type:application/json" \
+-d '{
   "service":"ttestt",
   "version":"0.1.3"
- }'  http://localhost:8000/api/v1/update/1/
+ }' \
+ http://localhost:8000/api/v1/update/1/
 
 {"change":"changed"}
 ```
@@ -202,12 +254,12 @@ curl -X PUT -H "Content-Type:application/json" -d '{
 > Accept: */*
 >
 < HTTP/1.1 200 OK
-< Date: Fri, 09 Mar 2018 20:37:25 GMT
-< Server: WSGIServer/0.2 CPython/3.6.4
 < Content-Type: application/json
 < Content-Length: 38
 
-curl -X DELETE http://localhost:8000/api/v1/delete/4/
+curl -X DELETE \
+-H "Authorization: JWT eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJ1c2VyX2lkIjoxLCJ1c2VybmFtZSI6ImFkbWluIiwiZXhwIjoxNTIxMTUzMjQ0LCJlbWFpbCI6ImFkbWluQG1haWwuY29tIiwib3JpZ19pYXQiOjE1MjA4OTMzMzl9.VQD9bqa8WR1Y2-7ecghZ2y-7T9tOstMhU7incJXlhc0" \
+http://localhost:8000/api/v1/delete/4/
 
 {"service":"test3","change":"removed"}
 ```

@@ -11,6 +11,7 @@ https://docs.djangoproject.com/en/2.0/ref/settings/
 """
 
 import os
+import datetime
 
 # Build paths inside the project like this: os.path.join(BASE_DIR, ...)
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
@@ -121,3 +122,32 @@ USE_TZ = True
 # https://docs.djangoproject.com/en/2.0/howto/static-files/
 
 STATIC_URL = '/static/'
+
+
+# django REST framework
+# http://www.django-rest-framework.org/#example
+# jwt http://getblimp.github.io/django-rest-framework-jwt/#usage
+REST_FRAMEWORK = {
+    # http://www.django-rest-framework.org/api-guide/permissions/
+    'DEFAULT_PERMISSION_CLASSES': (
+        'rest_framework.permissions.IsAuthenticated',
+        'rest_framework.permissions.IsAdminUser',
+    ),
+    # http://www.django-rest-framework.org/api-guide/authentication/
+    'DEFAULT_AUTHENTICATION_CLASSES': (
+        'rest_framework.authentication.SessionAuthentication',
+        'rest_framework.authentication.BasicAuthentication',
+        'rest_framework_jwt.authentication.JSONWebTokenAuthentication',
+    )
+}
+
+# Additional Settings
+# See: http://getblimp.github.io/django-rest-framework-jwt/#additional-settings
+JWT_AUTH = {
+    # token expiration time (3 days)
+    'JWT_EXPIRATION_DELTA': datetime.timedelta(days=3),
+    # Allow refresh
+    'JWT_ALLOW_REFRESH': True,
+    # allow token refresh time (30 days)
+    'JWT_REFRESH_EXPIRATION_DELTA': datetime.timedelta(days=30),
+}
