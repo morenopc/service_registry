@@ -1,4 +1,5 @@
 from django.contrib.auth.models import User
+from django.urls import reverse
 from rest_framework import status
 from rest_framework.test import APITestCase
 from rest_framework_jwt import utils
@@ -6,7 +7,7 @@ from rest_framework_jwt import utils
 
 class ServicesAPITestCase(APITestCase):
 
-    fixtures = ['core.json', ]
+    fixtures = ['core-services.json', ]
 
     def setUp(self):
 
@@ -22,66 +23,68 @@ class ServicesAPITestCase(APITestCase):
     def test_get_services(self):
         """GET /api/v1/registries/ must return status code 200"""
         
-        resp = self.client.get('/api/v1/registries/', HTTP_AUTHORIZATION=self.auth)
+        resp = self.client.get(reverse('service-list'), HTTP_AUTHORIZATION=self.auth)
         self.assertEqual(status.HTTP_200_OK, resp.status_code)
+        self.assertEqual(len(resp.data), 6)
 
     def test_add_service(self):
         """
             POST /api/v1/registries/ must return status code 201
-            JSON response {"service":"test","version":"0.0.1","change":"created"}"""
+            JSON response {"service":"test3","version":"0.0.1","change":"created"}"""
 
-        resp = self.client.post('/api/v1/registries/',
-                               {"service":"test0", "version":"0.1.1"},
+        resp = self.client.post(reverse('service-list'),
+                               {"service":"test3", "version":"0.0.1"},
                                HTTP_AUTHORIZATION=self.auth)
         self.assertEqual(status.HTTP_201_CREATED, resp.status_code)
         # JSON Response
         self.assertJSONEqual(resp.content,
-            {"service":"test0","version":"0.1.1","change":"created"})
+            {"service":"test3","version":"0.0.1","change":"created"})
 
     def test_find_service(self):
         """
             GET /api/v1/search/ must return status code 200 and
-            JSON response {"service":"test","version":"0.0.1","count":3}
+            JSON response {"service":"test","version":"0.0.1","count":2}
         """
 
-        resp = self.client.get('/api/v1/search/',
+        resp = self.client.get(reverse('search'),
                                {"service":"test", "version":"0.0.1"},
                                HTTP_AUTHORIZATION=self.auth)
         self.assertEqual(status.HTTP_200_OK, resp.status_code)
         # JSON Response
         self.assertJSONEqual(resp.content,
-            {"service":"test","version":"0.0.1","count":3})
+            {"service":"test","version":"0.0.1","count":2})
 
     def test_find_non_existing_service(self):
         """
             GET /api/v1/search/ must return status code 404 and
-            JSON response {"service":"test1","count":0}
+            JSON response {"service":"test","version":"0.0.4","count":0}
         """
 
-        resp = self.client.get('/api/v1/search/',
-                               {"service":"test1"},
+        resp = self.client.get(reverse('search'),
+                               {"service":"test", "version":"0.0.4"},
                                HTTP_AUTHORIZATION=self.auth)
         self.assertEqual(status.HTTP_404_NOT_FOUND, resp.status_code)
         # JSON Response
-        self.assertJSONEqual(resp.content, {"service":"test1","count":0})
+        self.assertJSONEqual(resp.content,
+            {"service":"test","version":"0.0.4","count":0})
 
     def test_find_service_without_version(self):
         """
             GET /api/v1/search/ must return status code 200 and
-            JSON response {"service":"test","count":3}
+            JSON response {"service":"test","count":4}
         """
 
-        resp = self.client.get('/api/v1/search/',
+        resp = self.client.get(reverse('search'),
                                {"service":"test"},
                                HTTP_AUTHORIZATION=self.auth)
         self.assertEqual(status.HTTP_200_OK, resp.status_code)
         # JSON Response
-        self.assertJSONEqual(resp.content, {"service":"test","count":3})
+        self.assertJSONEqual(resp.content, {"service":"test","count":4})
 
     def test_search_without_parameter(self):
         """GET /api/v1/search/ must return status code 500"""
 
-        resp = self.client.get('/api/v1/search/',
+        resp = self.client.get(reverse('search'),
                                {"version":"0.0.1"},
                                HTTP_AUTHORIZATION=self.auth)
         self.assertEqual(status.HTTP_500_INTERNAL_SERVER_ERROR, resp.status_code)
@@ -92,7 +95,7 @@ class ServicesAPITestCase(APITestCase):
     def test_search_without_service(self):
         """GET /api/v1/search/ must return status code 500"""
 
-        resp = self.client.get('/api/v1/search/',
+        resp = self.client.get(reverse('search'),
                                HTTP_AUTHORIZATION=self.auth)
         self.assertEqual(status.HTTP_500_INTERNAL_SERVER_ERROR, resp.status_code)
         # JSON Response
@@ -105,8 +108,8 @@ class ServicesAPITestCase(APITestCase):
             JSON response {"change":"changed"}
         """
 
-        resp = self.client.put('/api/v1/update/1/',
-                               {"service":"tttesttt", "version":"5.0.1"},
+        resp = self.client.put(reverse('update', args=[12]),
+                               {"service":"test", "version":"0.0.4"},
                                HTTP_AUTHORIZATION=self.auth)
         self.assertEqual(status.HTTP_200_OK, resp.status_code)
         # JSON Response
@@ -115,11 +118,11 @@ class ServicesAPITestCase(APITestCase):
     def test_remove_service(self):
         """
             DELETE /api/v1/search/ must return status code 200 and
-            JSON response {"service":"test3","change":"removed"}
+            JSON response {"service":"test2","change":"removed"}
         """
 
-        resp = self.client.delete('/api/v1/delete/3/',
+        resp = self.client.delete(reverse('remove', args=[16]),
                                HTTP_AUTHORIZATION=self.auth)
         self.assertEqual(status.HTTP_200_OK, resp.status_code)
         # JSON Response
-        self.assertJSONEqual(resp.content, {"service":"test3","change":"removed"})
+        self.assertJSONEqual(resp.content, {"service":"test2","change":"removed"})

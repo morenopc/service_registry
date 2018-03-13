@@ -268,5 +268,5 @@ http://localhost:8000/api/v1/delete/4/
 
 ### Run (test services)
 ```
-$ python manage.py test services
+registry$ python manage.py test services
 ```

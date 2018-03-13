@@ -32,10 +32,7 @@ class ServiceSearchGenericViewSet(mixins.RetrieveModelMixin,
                                   viewsets.GenericViewSet):
     """Service search viewset"""
 
-    queryset = Service.objects.all(
-                                ).values('service', 'version'
-                                ).order_by('service', 'version'
-                                ).annotate(count=Count('service'))
+    queryset = Service.objects.all()
     serializer_class = ServiceSearchModelSerializer
 
     def get_object(self):
@@ -55,17 +52,25 @@ class ServiceSearchGenericViewSet(mixins.RetrieveModelMixin,
                                'could not be found')
 
         # Finding service with or without version
-        try:
-            return self.queryset.get(**self.request.query_params.dict())
+        results = Service.objects.none()
+        if version is None:
+            results = self.queryset.filter(**self.request.query_params.dict()
+                ).values('service'
+                ).order_by('service'
+                ).annotate(count=Count('service'))
+        else:
+            results = self.queryset.filter(**self.request.query_params.dict()
+                ).values('service', 'version'
+                ).order_by('service', 'version'
+                ).annotate(count=Count('service'))
 
-        except Service.DoesNotExist as e:
+        if not results.exists():
             # Finding non existing service
             details_dict = self.request.query_params.dict()
             details_dict.update({'count': 0})
             raise ServiceSearchNotFound(details_dict)
 
-        except Exception as e:
-            raise APIException(e)
+        return results[0]
 
 
 class ServiceUpdateAPIView(generics.UpdateAPIView):
