@@ -1,4 +1,4 @@
 Django==2.0.3
 djangorestframework==3.7.7
 djangorestframework-jwt==1.11.0
-pytz==2018.3
+behave-django==1.1.0

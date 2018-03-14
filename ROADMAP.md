@@ -270,3 +270,11 @@ http://localhost:8000/api/v1/delete/4/
 ```
 registry$ python manage.py test services
 ```
+
+
+## Behave Tests
+
+### Run (test services)
+```
+registry$ python manage.py behave
+```
