@@ -1,50 +1,282 @@
-# Let's write: service registry
+# Service Registry
 
-## Overview
-This service is responsible of keeping track of services within the system.
-It is a restful way for services to find other services, ensure that they are
-healthy.
+## Approach
+Get a registry web service API up and running with a stronge base, easy to expand and scale, as simple as possible that will pass all behave tests.
 
-### Project requirements
-Basic list of requirements can be foud in `featrues` directory that highlights
-the very high overview of how it is supposed to be working. It is intentionally
-left like that as details of implementation are left to you. Any changes
-and decisions you make should be reflected in feature files with corresponding
-steps implementation for [Behave](http://pythonhosted.org/behave/). In short if
-it is not in feature files, it doesn't exist and has no right to exist in code.
+## Resources
+- Python 3.6.4 / Django 2.0.3
+- Django REST framework 3.7.7 (and other apps)
+- Unit Test
+- Behave Tests
 
-## Your task
-It's fairly simple - you have to write the whole thing. Nah, not really, as 
-while it would be impressive - it is a rather massive task for months to write
-a beast like this right. Instead I want you to try and write a part of it.
+## Road map
+1. Setup development environment
+2. install and config (python, django and so on) and start project
+3. install and config Django REST framework (and other apps)
+4. write some code, pass the tests and commit (while push: if all_tests_passed: push = True)
+5. PEP8
+6. create a pull request
+7. add JSON Web Tokens (JWT) REST framework authentication
+8. write and pass unit tests
+9. write and pass behave tests
 
-Which part it will be is entirely up to you. You can focus on the API part of
-things and write beautiful rest-full automation for all the services, design
-API for registration and then searching/retrieving, checking health etc. This
-would mostly demonstrate your knowledge of architecture, designing, planning
-and documenting.
 
-Or you could instead write a solid backend that not only is easy to expand but
-also to scale, either from scratch or on top of some existing solution (Celery
-is a good example) in which case I would expect installation automation to go
-along with it. Doesn't have to be pretty, shell-ridden vagrant would be plenty.
-This certainly will highlight your developer aspects, knowledge of common 
-problems that come with vertical and horizontal scaling etc.
+## Setup development 
 
-Or anything else you can potentially imagine. I do not expect you to deliver
-anything that will be finished as that would take days and I want you to spend
-no more than 2-4 hours on this. What I want to shine through is how do you
-approach this sort of a project, where do you begin and how is your work process
-like. For this reasons I would like you to commit as often as you can, with 
-good, clean commit messages and to provide a note explaining what you've done,
-what are your plans for the future (if you were to keep working on it) and
-possible problems that are yet to be conquered, preferably with potential 
-solutions. If there are bug you've left behind because they would take too much 
-time to fix, putting them there will score you big points. 
+### Install python 3.6.4 with pyenv
 
-## Summary
+Follow the  Installation / Update / Uninstallation at [https://github.com/yyuu/pyenv-installer#installation--update--uninstallation](https://github.com/yyuu/pyenv-installer#installation--update--uninstallation)
 
-In summary have fun and trust me when I say it - being honest and true with
-everything, from what you know and what you do not know is most important part
-of doing good on this task. When you are done please open a pull request to
-this repo with your solution.
+```
+$ pyenv update
+```
+Install python 3.6.4
+```
+$ pyenv install 3.6.4
+$ pyenv global 3.6.4
+$ pyenv versions
+  system
+* 3.6.4 (set by /home/moreno/.pyenv/version)
+$ python -V
+Python 3.6.4
+```
+
+### Run local server
+
+```
+$ python -m venv env
+$ . env/bin/activate
+(env) $ pip install -r requirements.txt
+(env) $ python manage.py makemigrations
+(env) $ python manage.py migrate
+(env) $ python manage.py runserver
+```
+
+## Rest Framework JWT (JSON web token)
+
+### Get Token
+
+```
+> POST /api-token-auth/ HTTP/1.1
+> Host: localhost:8000
+> User-Agent: curl/7.52.1
+> Accept: */*
+>
+< HTTP/1.1 200 OK
+< Content-Type: application/json
+< Content-Length: 221
+
+$ curl -H "Content-Type:application/json" -d '{"username":"admin","password":"p@SS4w0rD4"}' http://localhost:8000/api-token-auth/
+
+{"token":"eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJ1c2VyX2lkIjoxLCJ1c2VybmFtZSI6ImFkbWluIiwiZXhwIjoxNTIxMTUyNTM5LCJlbWFpbCI6ImFkbWluQG1haWwuY29tIiwib3JpZ19pYXQiOjE1MjA4OTMzMzl9.4ewU0nAA1q72me_Su7plzylVjMnwNEbkcwx_uxY7anM"}
+```
+
+### Verify Token
+
+```
+> POST /api-token-verify/ HTTP/1.1
+> Host: localhost:8000
+> User-Agent: curl/7.52.1
+> Accept: */*
+>
+< HTTP/1.1 200 OK
+< Content-Type: application/json
+< Content-Length: 221
+
+$ curl -H "Content-Type:application/json" -d '{"token":"eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJ1c2VyX2lkIjoxLCJ1c2VybmFtZSI6ImFkbWluIiwiZXhwIjoxNTIxMTUyNTM5LCJlbWFpbCI6ImFkbWluQG1haWwuY29tIiwib3JpZ19pYXQiOjE1MjA4OTMzMzl9.4ewU0nAA1q72me_Su7plzylVjMnwNEbkcwx_uxY7anM"}' http://localhost:8000/api-token-verify/
+
+{"token":"eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJ1c2VyX2lkIjoxLCJ1c2VybmFtZSI6ImFkbWluIiwiZXhwIjoxNTIxMTUyNTM5LCJlbWFpbCI6ImFkbWluQG1haWwuY29tIiwib3JpZ19pYXQiOjE1MjA4OTMzMzl9.4ewU0nAA1q72me_Su7plzylVjMnwNEbkcwx_uxY7anM"}
+```
+
+### Refresh Token
+
+```
+> POST /api-token-refresh/ HTTP/1.1
+> Host: localhost:8000
+> User-Agent: curl/7.52.1
+> Accept: */*
+>
+< HTTP/1.1 200 OK
+< Content-Type: application/json
+< Content-Length: 221
+
+$ curl -v -H "Content-Type:application/json" -d '{"token":"eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJ1c2VyX2lkIjoxLCJ1c2VybmFtZSI6ImFkbWluIiwiZXhwIjoxNTIxMTUyNTM5LCJlbWFpbCI6ImFkbWluQG1haWwuY29tIiwib3JpZ19pYXQiOjE1MjA4OTMzMzl9.4ewU0nAA1q72me_Su7plzylVjMnwNEbkcwx_uxY7anM"}' http://localhost:8000/api-token-refresh/
+
+{"token":"eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJ1c2VyX2lkIjoxLCJ1c2VybmFtZSI6ImFkbWluIiwiZXhwIjoxNTIxMTUzMjQ0LCJlbWFpbCI6ImFkbWluQG1haWwuY29tIiwib3JpZ19pYXQiOjE1MjA4OTMzMzl9.VQD9bqa8WR1Y2-7ecghZ2y-7T9tOstMhU7incJXlhc0"}
+```
+
+## Rest Framework
+
+### Add service
+
+```
+> POST /api/v1/registries/ HTTP/1.1
+> Host: localhost:8000
+> User-Agent: curl/7.52.1
+> Accept: */*
+>
+< HTTP/1.1 201 Created
+< Content-Type: application/json
+< Content-Length: 63
+
+curl -v -H "Authorization: JWT eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJ1c2VyX2lkIjoxLCJ1c2VybmFtZSI6ImFkbWluIiwiZXhwIjoxNTIxMTUzMjQ0LCJlbWFpbCI6ImFkbWluQG1haWwuY29tIiwib3JpZ19pYXQiOjE1MjA4OTMzMzl9.VQD9bqa8WR1Y2-7ecghZ2y-7T9tOstMhU7incJXlhc0" \
+-H "Content-Type:application/json" \
+-d '{
+  "service":"test",
+  "version":"0.0.1"
+ }' \
+ http://localhost:8000/api/v1/registries/
+
+{"service":"test","version":"0.0.1","change":"created"}
+```
+
+### Find service
+
+```
+> GET /api/v1/search/?service=test3 HTTP/1.1
+> Host: localhost:8000
+> User-Agent: curl/7.52.1
+> Accept: */*
+>
+< HTTP/1.1 200 OK
+< Content-Type: application/json
+< Content-Length: 31
+
+curl -H "Authorization: JWT eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJ1c2VyX2lkIjoxLCJ1c2VybmFtZSI6ImFkbWluIiwiZXhwIjoxNTIxMTUzMjQ0LCJlbWFpbCI6ImFkbWluQG1haWwuY29tIiwib3JpZ19pYXQiOjE1MjA4OTMzMzl9.VQD9bqa8WR1Y2-7ecghZ2y-7T9tOstMhU7incJXlhc0" \
+-H "Content-Type:application/json" \
+"http://localhost:8000/api/v1/search/?service=test3&version=0.0.1"
+
+{"service":"test3","version":"0.0.1","count":3}
+```
+
+### Finding non existing service
+
+```
+> GET /api/v1/search/?service=test1 HTTP/1.1
+> Host: localhost:8000
+> User-Agent: curl/7.52.1
+> Accept: */*
+>
+< HTTP/1.1 404 Not Found
+< Content-Type: application/json
+< Content-Length: 29
+
+curl -H "Authorization: JWT eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJ1c2VyX2lkIjoxLCJ1c2VybmFtZSI6ImFkbWluIiwiZXhwIjoxNTIxMTUzMjQ0LCJlbWFpbCI6ImFkbWluQG1haWwuY29tIiwib3JpZ19pYXQiOjE1MjA4OTMzMzl9.VQD9bqa8WR1Y2-7ecghZ2y-7T9tOstMhU7incJXlhc0" \
+-H "Content-Type:application/json" "http://localhost:8000/api/v1/search/?service=test1"
+
+{"service":"test1","count":0}
+```
+
+### Finding service without version
+
+```
+> GET /api/v1/search/?service=test HTTP/1.1
+> Host: localhost:8000
+> User-Agent: curl/7.52.1
+> Accept: */*
+>
+< HTTP/1.1 200 OK
+< Content-Type:application/json
+< Content-Length: 28
+
+curl -H "Authorization: JWT eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJ1c2VyX2lkIjoxLCJ1c2VybmFtZSI6ImFkbWluIiwiZXhwIjoxNTIxMTUzMjQ0LCJlbWFpbCI6ImFkbWluQG1haWwuY29tIiwib3JpZ19pYXQiOjE1MjA4OTMzMzl9.VQD9bqa8WR1Y2-7ecghZ2y-7T9tOstMhU7incJXlhc0" \
+-H "Content-Type:application/json" \
+"http://localhost:8000/api/v1/search/?service=test"
+
+{"service":"test","count":3}
+```
+
+### Exceptions
+
+#### Search without parameter
+```
+> GET /api/v1/search/ HTTP/1.1
+> Host: localhost:8000
+> User-Agent: curl/7.52.1
+> Accept: */*
+>
+< HTTP/1.1 500 Internal Server Error
+< Content-Type:application/json
+< Content-Length: 70
+
+curl -H "Authorization: JWT eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJ1c2VyX2lkIjoxLCJ1c2VybmFtZSI6ImFkbWluIiwiZXhwIjoxNTIxMTUzMjQ0LCJlbWFpbCI6ImFkbWluQG1haWwuY29tIiwib3JpZ19pYXQiOjE1MjA4OTMzMzl9.VQD9bqa8WR1Y2-7ecghZ2y-7T9tOstMhU7incJXlhc0" \
+-H "Content-Type:application/json" \
+"http://localhost:8000/api/v1/search/"
+
+{"detail":"Search parameters (service or version) could not be found"}
+```
+
+#### Search without service
+```
+> GET /api/v1/search/?version=0.0.1 HTTP/1.1
+> Host: localhost:8000
+> User-Agent: curl/7.52.1
+> Accept: */*
+>
+< HTTP/1.1 500 Internal Server Error
+< Content-Type:application/json
+< Content-Length: 58
+
+curl -H "Authorization: JWT eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJ1c2VyX2lkIjoxLCJ1c2VybmFtZSI6ImFkbWluIiwiZXhwIjoxNTIxMTUzMjQ0LCJlbWFpbCI6ImFkbWluQG1haWwuY29tIiwib3JpZ19pYXQiOjE1MjA4OTMzMzl9.VQD9bqa8WR1Y2-7ecghZ2y-7T9tOstMhU7incJXlhc0" \
+-H "Content-Type:application/json" \
+"http://localhost:8000/api/v1/search/?version=0.0.1"
+
+{"detail":"Search parameter (service) could not be found"}
+```
+
+### Updating a service
+```
+> PUT /api/v1/update/1/ HTTP/1.1
+> Host: localhost:8000
+> User-Agent: curl/7.52.1
+> Accept: */*
+> Content-Type:application/json
+> Content-Length: 46
+>
+< HTTP/1.1 200 OK
+< Content-Type: application/json
+< Content-Length: 20
+
+curl -X PUT -H "Authorization: JWT eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJ1c2VyX2lkIjoxLCJ1c2VybmFtZSI6ImFkbWluIiwiZXhwIjoxNTIxMTUzMjQ0LCJlbWFpbCI6ImFkbWluQG1haWwuY29tIiwib3JpZ19pYXQiOjE1MjA4OTMzMzl9.VQD9bqa8WR1Y2-7ecghZ2y-7T9tOstMhU7incJXlhc0" \
+-H "Content-Type:application/json" \
+-d '{
+  "service":"ttestt",
+  "version":"0.1.3"
+ }' \
+ http://localhost:8000/api/v1/update/1/
+
+{"change":"changed"}
+```
+
+### Removing a service
+```
+> DELETE /api/v1/delete/4/ HTTP/1.1
+> Host: localhost:8000
+> User-Agent: curl/7.52.1
+> Accept: */*
+>
+< HTTP/1.1 200 OK
+< Content-Type: application/json
+< Content-Length: 38
+
+curl -X DELETE \
+-H "Authorization: JWT eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJ1c2VyX2lkIjoxLCJ1c2VybmFtZSI6ImFkbWluIiwiZXhwIjoxNTIxMTUzMjQ0LCJlbWFpbCI6ImFkbWluQG1haWwuY29tIiwib3JpZ19pYXQiOjE1MjA4OTMzMzl9.VQD9bqa8WR1Y2-7ecghZ2y-7T9tOstMhU7incJXlhc0" \
+http://localhost:8000/api/v1/delete/4/
+
+{"service":"test3","change":"removed"}
+```
+
+## Unit Tests
+
+### Run (test services)
+```
+registry$ python manage.py test services
+```
+
+
+## Behave Tests
+
+### Run (test services)
+```
+registry$ python manage.py behave
+```
